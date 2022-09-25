@@ -32,14 +32,14 @@
     // delete dupe materials
     function cleanupEntities() {
         unclearedEntities = [];
-        unclearedEntities = Entities.findEntitiesByType("Material", Entities.getEntityProperties(skydomeID).position, 1000);
+        unclearedEntities = Entities.findEntitiesByType("Material", Entities.getEntityProperties(skydomeID).position, 10000);
         for (var i = 0; i < unclearedEntities.length; i++) {
             if (Entities.getEntityProperties(unclearedEntities[i]).name.indexOf("sky_DayNight_Mat") !== -1) {
                 Entities.deleteEntity(unclearedEntities[i]);
             }
         }
         unclearedEntities = null;
-        unclearedEntities = Entities.findEntitiesByType("Zone", Entities.getEntityProperties(skydomeID).position, 1000);
+        unclearedEntities = Entities.findEntitiesByType("Zone", Entities.getEntityProperties(skydomeID).position, 10000);
         for (var i = 0; i < unclearedEntities.length; i++) {
             if (Entities.getEntityProperties(unclearedEntities[i]).name.indexOf("sky_DayNight_Zone") !== -1) {
                 Entities.deleteEntity(unclearedEntities[i]);
@@ -483,6 +483,7 @@
 
 
     function updateDayNight() {
+        findSunMoon();
         currentTime = new Date();
         seconds = ((currentTime.getMinutes() + (currentTime.getHours() * 60)) * 60) + currentTime.getSeconds();
         timeProgress = ((seconds / secondsInADay) % 1) * cycleSpeed;
@@ -697,11 +698,6 @@
             sunAngleVertical = map_range((timeProgress), 0.75, 1, -.7, -1);
             sunAngleHorizontal = map_range((timeProgress), 0.75, 1, .7, 0);
         }
-
-        // timeProgress = 0, angle -1
-        // timeProgress = .25, angle -0.8
-        // timeProgress = .5, angle -1
-        // timeProgress = .75, angle -0.8
 
         // update the ZONE ENTITY, based on current time of day
         Entities.editEntity(zoneID,
